@@ -22,7 +22,9 @@ router.all('/send/*', function(req, res) {
     mqtt.send(topic,message);
      return res.json({
       error: false,
-      message: 'Message successfully sent.'
+      message: 'Message successfully sent.',
+      topic: topic,
+      payload:JSON.stringify(message)
     });
   }
 });
