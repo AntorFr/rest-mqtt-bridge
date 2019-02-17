@@ -8,7 +8,8 @@ config = extend({
     password: '',
     clientId: 'rest-mqtt', 
     port: 1883, 
-    keepalive : 60
+    keepalive : 60,
+    reconnectPeriod: 600
 },config);
 
 process.on('exit', exitHandler);
