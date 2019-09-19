@@ -8,12 +8,18 @@ var app = require('../app');
 var debug = require('debug')('rest-mqtt-bridge:server');
 var http = require('http');
 
+var pjson = require('./package.json');
+
+
+
 /**
  * Get port from environment and store in Express.
  */
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
+
+process.title = pjson.version.name;
 
 /**
  * Create HTTP server.
