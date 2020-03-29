@@ -21,6 +21,7 @@ client.on('connect', function(){
 });
 
 function exitHandler() {
+    console.error("exit MQTT"); 
     client.end();
     process.exit();
 }

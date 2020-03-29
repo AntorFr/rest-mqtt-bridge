@@ -8,7 +8,7 @@ var app = require('../app');
 var debug = require('debug')('rest-mqtt-bridge:server');
 var http = require('http');
 
-var pjson = require('./package.json');
+var pjson = require('../package.json');
 
 
 
