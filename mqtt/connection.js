@@ -41,9 +41,9 @@ function mqtt_error(err) {
 }
 
 module.exports = {
-  send: function(topic,message) {
-    var payload = JSON.stringify(message);
-    client.publish(topic, payload);
+  send: function(topic,message,retain=false) {
+    var options={retain:retain,qos:1};
+    client.publish(topic, message,options);
   }
 };
 
