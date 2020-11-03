@@ -14,7 +14,7 @@ router.all('/send(_retain)?/*', function(req, res) {
   var topic =  req.path.substring(req.path.indexOf("/send")+pathoffset).replace(/\/$/, '');
 
   //if data has been send as key rather than value
-  if  (Object.values(message)[0] == "")
+  if  (Object.values(message)[0] === "")
     message = JSON.parse(Object.keys(message)[0]);
   
   //console.log({"topic":topic,"message":message});
