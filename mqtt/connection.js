@@ -9,7 +9,14 @@ config = extend({
     clientId: 'rest-mqtt', 
     port: 1883, 
     keepalive : 60,
-    reconnectPeriod: 600
+    reconnectPeriod: 600,
+    clean:true,
+    will: {
+        topic: "home/log/state/rest-mqtt",
+        payload: 'lost',
+        qos: 1,
+        retain:true
+    }
 },config);
 
 process.on('exit', exitHandler);
@@ -18,10 +25,14 @@ process.on('SIGINT', exitHandler);
 var client = mqtt.connect(config);
 client.on('connect', function(){
     console.log("Connecting MQTT");
+    var options={retain:true,qos:1};
+    client.publish(config.will.topic, "connected",options);
 });
 
 function exitHandler() {
     console.error("exit MQTT"); 
+    var options={retain:true,qos:1};
+    client.publish(config.will.topic, "disconnected",options);
     client.end();
     process.exit();
 }
