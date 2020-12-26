@@ -1,6 +1,9 @@
 var mqtt = require('mqtt');
 var config  = require('./config.json');
+var package  = require('../package.json');
 var extend  = require('deep-extend');
+const process = require('process');
+const os = require('os');
 
 config = extend({
     host: 'localhost',
@@ -24,23 +27,50 @@ process.on('SIGINT', exitHandler);
 
 var client = mqtt.connect(config);
 client.on('connect', function(){
-    console.log("Connecting MQTT");
-    var options={retain:true,qos:1};
-    client.publish(config.will.topic, "connected",options);
+    console.log("Connected to MQTT");
+    client.publish(config.will.topic, "connected",{retain:true,qos:1});
+    advertise();
+
+    client.subscribe(["home/log/advertise/set","home/log/advertise/"+config.clientId+"/set" ],{qos:1})
 });
+
 
 function exitHandler() {
     console.error("exit MQTT"); 
-    var options={retain:true,qos:1};
-    client.publish(config.will.topic, "disconnected",options);
+    client.publish(config.will.topic, "disconnected",{retain:true,qos:1});
     client.end();
     process.exit();
 }
 
+function advertise() {
+    var data = {
+        name:os.hostname(),
+        id: config.clientId,
+        stats:{
+            uptime: os.uptime(),
+            freeMem: os.freemem()
+        },
+        fw:{
+            name:package.name,
+            version: package.version
+        },
+        implementation:{
+            device: "nodejs",
+            version: process.version
+        }
+    }
+    client.publish("home/log/advertise/"+config.clientId, JSON.stringify(data),{retain:true,qos:1});
+}
+
+client.on('message', function (topic, message) {
+    if(topic.includes("advertise")){
+        advertise();
+    }
+  })
+
 client.on('reconnect', function(err){
     console.log("Reconnect MQTT"); 
     if (err) {mqtt_error(err);} 
-    client = mqtt.connect(config);
 });
     
 client.on('error', mqtt_error);

@@ -27,7 +27,7 @@ router.all('/send(_retain)?/*', function(req, res) {
   } else {
     var payload = JSON.stringify(message);
     if (payload == "{}")
-        payload = "";
+        payload = null;
     mqtt.send(topic,payload,retain);
      return res.json({
       error: false,
